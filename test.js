@@ -1,0 +1,3 @@
+
+term="";
+console.log(term === "");

@@ -6,6 +6,7 @@ var key = new keys();
 
 var nodeArgs = process.argv;
 var term = "";
+console.log(term);
 
 for (var i = 3; i < nodeArgs.length; i++) {
 
@@ -18,6 +19,10 @@ for (var i = 3; i < nodeArgs.length; i++) {
     }
   };
 
+console.log("the term: " + term);
+
+
+
 if(nodeArgs[2] === "concert-this"){
     key.concertThis(term);
 }
@@ -25,5 +30,6 @@ else if (nodeArgs[2]=== "movie-this"){
     key.movieThis(term);
 }
 else if (nodeArgs[2] === "spotify-this-song"){
-    key.spotifyThis();
-}
+    key.spotifyThis(term);
+
+};

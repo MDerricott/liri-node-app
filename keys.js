@@ -2,6 +2,7 @@
 var request = require("request");
 var moment = require("moment");
 var Spotify = require('node-spotify-api');
+var fs = require("fs");
 
 var divider = "\n------------------------------------------------------------";
 
@@ -59,44 +60,49 @@ this.movieThis = function(term) {
 
 };
 
-this.spotifyThis = function() {
+this.spotifyThis = function(term) {
   console.log("Searching Spotify...");
+ 
   var spotify = new Spotify({
   id: process.env.SPOTIFY_ID,
   secret: process.env.SPOTIFY_SECRET
-});
-spotify.search({ type: 'track', query: 'All the Small Things'}, function(err, data) {
-  if (!err) {
-    console.log(data.tracks.items[0].album.artists[3]); 
-  }
-  else{
-    return console.log('Error occurred: ' + err);
-  };
- 
+  });
 
-});
-};
   
-      // var movieData = [
-      //   divider,
-      //   "Title: " + jsonData.Title,
-      //   "Release: " + jsonData.Year,
-      //   "IMDB Rating: " + jsonData.Ratings[0].Value,
-      //   "Rotten Tomato Rating: " + jsonData.Ratings[0].Value,
-      //   "Country: " + jsonData.Country,
-      //   "Lanuage: " + jsonData.Language,
-      //   "Plot: " + jsonData.Plot,
-      //   "Actors: " + jsonData.Actors,
-      //   divider
+spotify.search({ type: 'track', query: term}, function(err, data) {
+  if (!err) {
+    var songData = [
+      divider,
+      "Artist(s): " + data.tracks.items[0].artists[0].name,
+      "Song: " + data.tracks.items[0].name,
+      "Album: " + data.tracks.items[0].album.name,
+      "Song URL: " + data.tracks.items[0].external_urls.spotify,
+      divider
+    ].join("\n");
+ console.log(songData);
+ 
+  }
+  else if (term === ""){
+    spotify.search({ type: 'track', query: "All the small things"}, function(err, data) {
+    var songData = [
+      divider,
+      "Artist(s): " + data.tracks.items[0].artists[0].name,
+      "Song: " + data.tracks.items[0].name,
+      "Album: " + data.tracks.items[0].album.name,
+      "Song URL: " + data.tracks.items[0].external_urls.spotify,
+      divider
+    ].join("\n");
+ console.log(songData);
+  });
+    
+  }
+  else {
+    return console.log('Error occurred: ' + err);
+  }
 
-      // ].join("\n");
-      // console.log(movieData);
-     
-   
+});
 
-
-
-
+};
 };
 
 
@@ -108,13 +114,6 @@ spotify.search({ type: 'track', query: 'All the Small Things'}, function(err, da
 
 
 
-
-
-
-// exports.spotify = {
-//   id: process.env.your-spotify-id
-//   secret: process.env.SPOTIFY_SECRET
-// };
 
 
 module.exports = liriNode;
