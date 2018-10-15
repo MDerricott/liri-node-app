@@ -1,24 +1,13 @@
+// require("dotenv").config();
 var request = require("request");
 var moment = require("moment");
-console.log('this is loaded');
-var nodeArgs = process.argv;
-var term = "";
-
-for (var i = 3; i < nodeArgs.length; i++) {
-
-  if (i > 3 && i < nodeArgs.length) {
-    term = term + " " + nodeArgs[i];
-  }
-
-  else {
-    term += nodeArgs[i];
-  }
-};
+var Spotify = require('node-spotify-api');
 
 var divider = "\n------------------------------------------------------------";
 
+var liriNode = function () {
 
-var concertThis = function () {
+this.concertThis = function(term) {
   console.log("Searching Bands in Town...");
   var queryURL = "https://rest.bandsintown.com/artists/" + term + "/events?app_id=codingbootcamp";
   request(queryURL,function(error,response,body){
@@ -42,41 +31,90 @@ var concertThis = function () {
 
 };
 
+this.movieThis = function(term) {
+  console.log("Searching Movies...");
+  var queryURL = "http://www.omdbapi.com/?t=" + term + "&y=&plot=short&apikey=trilogy";
+  request(queryURL,function(error,response,body){
+    if(!error){
+      var jsonData = JSON.parse(body);
+     
 
-// // Then run a request to the OMDB API with the movie specified
-// var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
+      var movieData = [
+        divider,
+        "Title: " + jsonData.Title,
+        "Release: " + jsonData.Year,
+        "IMDB Rating: " + jsonData.Ratings[0].Value,
+        "Rotten Tomato Rating: " + jsonData.Ratings[0].Value,
+        "Country: " + jsonData.Country,
+        "Lanuage: " + jsonData.Language,
+        "Plot: " + jsonData.Plot,
+        "Actors: " + jsonData.Actors,
+        divider
 
-// // This line is just to help us debug against the actual URL.
-// console.log(queryUrl);
+      ].join("\n");
+      console.log(movieData);
+     
+    }
+  });
 
-// request(queryUrl, function(error, response, body) {
+};
 
-//   // If the request is successful
-//   if (!error && response.statusCode === 200) {
-
-//     // Parse the body of the site and recover just the imdbRating
-//     // (Note: The syntax below for parsing isn't obvious. Just spend a few moments dissecting it).
-//     console.log("Release Year: " + JSON.parse(body).Year);
-//   }
-// });
-
-
-
-
-
-
-
-
-
-
-
-
-exports.spotify = {
+this.spotifyThis = function() {
+  console.log("Searching Spotify...");
+  var spotify = new Spotify({
   id: process.env.SPOTIFY_ID,
   secret: process.env.SPOTIFY_SECRET
+});
+spotify.search({ type: 'track', query: 'All the Small Things'}, function(err, data) {
+  if (!err) {
+    console.log(data.tracks.items[0].album.artists[3]); 
+  }
+  else{
+    return console.log('Error occurred: ' + err);
+  };
+ 
+
+});
+};
+  
+      // var movieData = [
+      //   divider,
+      //   "Title: " + jsonData.Title,
+      //   "Release: " + jsonData.Year,
+      //   "IMDB Rating: " + jsonData.Ratings[0].Value,
+      //   "Rotten Tomato Rating: " + jsonData.Ratings[0].Value,
+      //   "Country: " + jsonData.Country,
+      //   "Lanuage: " + jsonData.Language,
+      //   "Plot: " + jsonData.Plot,
+      //   "Actors: " + jsonData.Actors,
+      //   divider
+
+      // ].join("\n");
+      // console.log(movieData);
+     
+   
+
+
+
+
 };
 
 
-exports.bandsInTown = {
-  concertThis: concertThis()
-}
+
+
+
+
+
+
+
+
+
+
+
+// exports.spotify = {
+//   id: process.env.your-spotify-id
+//   secret: process.env.SPOTIFY_SECRET
+// };
+
+
+module.exports = liriNode;
